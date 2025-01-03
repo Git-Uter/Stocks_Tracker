@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General body styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Layout styles */
+        .container {
+            display: flex;
+            height: 85vh;
+            gap: 20px;
+            padding: 0px 20px 20px 20px;
+        }
+
+        .pane {
+            border-radius: 8px;
+            overflow: auto;
+        }
+
+        .form-pane {
+            margin-top: 5.5%;
+            background-color: #ffffff;
+            flex: 2;
+            padding: 20px;
+            height: 65%;
+        }
+
+        .info-pane {
+            flex: 6;
+            padding: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        /* Heading styles */
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 20px;
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        form p {
+            margin: 0;
+            padding-right: 30px;
+        }
+
+        form label {
+            display: block;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        form input,
+        form select,
+        form textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 12px;
+            width: calc(100% - 22px);
+            /* Adjusted width to be same as button */
+        }
+
+        form input:focus {
+            outline: none;
+            border: 1px solid #3498db;
+        }
+
+        form button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+            /* Ensures button is full width */
+        }
+
+        form button:hover {
+            background-color: #1f6fa2;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 12px;
+            /* Decreased font size */
+        }
+
+        th,
+        td {
+            padding: 8px;
+            /* Decreased padding */
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+            /* Decreased font size */
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f7fb;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-size: 13px;
+            /* Slightly larger font size for headers */
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+            /* Reduced gap between buttons */
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            /* Prevent wrapping */
+        }
+
+        .actions a {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 10px;
+            /* Smaller font size for buttons */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            /* Prevent text overflow */
+        }
+
+        .actions a.btn-sell {
+            background-color: #2ecc71;
+        }
+
+        .actions a.btn-sell:hover {
+            background-color: #27ae60;
+        }
+
+        .actions a.btn-update {
+            background-color: orange;
+        }
+
+        .actions a.btn-update:hover {
+            background-color: #e67e22;
+        }
+
+        .actions a.btn-delete {
+            background-color: #e74c3c;
+        }
+
+        .actions a.btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data {
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: #2ecc71;
+            padding: 5px;
+        }
+
+        .analysis {
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: orange;
+            padding: 5px;
+        }
+
+        .data:hover {
+            background-color: #27ae60;
+        }
+
+        .analysis:hover {
+            background-color: #e67e22;
+        }
+
+        .header {
+            margin: 0px 20px;
+            gap: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .logout {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 7px 9px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .logout:hover {
+            background-color: #c0392b;
+        }
+
+        .last {
+            width: 4%;
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .pane {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <h1>{{ request.user.username|upper }}</h1>
+        <h1 style="text-align: center;">PORTFOLIO ANALYZER</h1>
+        <div class="last">
+            <form action="{% url 'logout' %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="logout" title="logout"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Form Pane -->
+        <div class="pane form-pane">
+            <h2>ADD STOCK INFORMATION</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label|upper }}:</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button type="submit">Add Stock Information</button>
+            </form>
+        </div>
+
+        <!-- Info Pane -->
+        <div class="pane info-pane">
+            <div class="title">
+                <h2>PURCHASED STOCK INFORMATION</h2>
+                <div>
+                    <a class="data" href="{% url 'sold_stock'%}">Sold Stocks</a>
+                    <a class="analysis " href="{% url 'bep_analysis' %}">Bep Analysis</a>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>SCRIP</th>
+                        <th>P DATE</th>
+                        <th>M DAYS</th>
+                        <th>QTY</th>
+                        <th>WACC</th>
+                        <th>LTP</th>
+                        <th>N INVESTMENT</th>
+                        <th>INT RATE</th>
+                        <th>INT</th>
+                        <th>CURR VALUE</th>
+                        <th>P/L</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                {%if stock_data%}
+                <tbody>
+                    {% for data in stock_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ data.SCRIP }}</td>
+                        <td>{{ data.Purchased_Date|date:"Y/M/d" }}</td>
+                        <td>{{ data.matured_days }}</td>
+                        <td>{{ data.Quantity }}</td>
+                        <!-- <td>{{ data.WACC|floatformat:2 }}</td> -->
+                        {% if data.WACC %}
+                        <td>{{ data.WACC|floatformat:2 }}</td>
+                        {% else %}
+                        <td>{{ data.Purchased_At|floatformat:2 }}</td>
+                        {% endif %}
+                        <td>{{ data.LTP|floatformat:2 }}</td>
+                        <td>{{ data.net_investment|floatformat:2 }}</td>
+                        <td>{{ data.Interest_Rate|floatformat:2 }}</td>
+                        <td>{{ data.interest|floatformat:2 }}</td>
+                        <td>{{ data.current_value|floatformat:2 }}</td>
+                        <td>{{ data.current_pl|floatformat:2 }}</td>
+                        <td class="actions">
+                            {% if data.Sellable %}
+                            <a href="{% url 'sell_stock' data.id %}" class="btn btn-sell"
+                                style="color: white; text-decoration: none;"><i class="fas fa-dollar-sign"
+                                    style="width: 11px;"></i></a>
+                            <a href="{% url 'update_stock' data.id %}" class="btn btn-update"
+                                style="color: white; text-decoration: none;"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete_stock' data.id %}" class="btn btn-delete"
+                                style="color: white; text-decoration: none;"><i class="fas fa-trash-alt"></i></a>
+                            {% else %}
+                            <a href="#" class="btn" style="color: red; text-decoration: none;"><i
+                                    class="fa-regular fa-circle-xmark"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {%else%}
+                <tbody>
+                    <tr>
+                        <td colspan="13">Purchased Data Unavailable</td>
+                    </tr>
+                </tbody>
+                {%endif%}
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

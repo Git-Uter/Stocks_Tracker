@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            position: relative;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Reduced gap between fields */
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        input:focus {
+            border-color: #2ecc71;
+        }
+
+        input::placeholder {
+            color: #888;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px;
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            width: 15px;
+            height: 15px;
+            background-color: #dc2214;
+            /* Red background */
+            border-radius: 50%;
+            /* Full roundness */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Subtle hover effect */
+        }
+
+        .close-btn:hover {
+            background-color: red;
+            /* Slightly darker red on hover */
+        }
+
+        /* Error message styling */
+        .error p {
+            color: red;
+            font-size: 12px;
+            /* Increased font size for better visibility */
+            padding: 5px 0;
+            margin-top: 5px;
+            /* Reduced gap between input field and error message */
+        }
+
+        .next {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <a href="{% url 'home' %}" class="close-btn"><i class="fa-regular fa-circle-xmark"></i></a>
+        <h2>Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Username field -->
+            <div>
+                <label for="username">Username:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="error">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Password field -->
+            <div>
+                <label for="password">Password:</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="error">
+                    {% for error in form.password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Display general error message -->
+            {% if form.errors %}
+            <div class="error">
+                <p>Invalid username or password. Please try again.</p>
+            </div>
+            {% endif %}
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p class="next">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+    </div>
+</body>
+
+</html>

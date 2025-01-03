@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 100px;
+            margin-bottom: 0;
+            color: #ff5c5c;
+            animation: bounce 1s infinite alternate;
+        }
+
+        p {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 30px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #ff5c5c;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #ff3a3a;
+        }
+
+        .image-container {
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            width: 300px;
+            height: auto;
+            border-radius: 15px;
+            /* Rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow effect */
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Insert free 404-related image -->
+        <div class="image-container">
+            <img src="https://th.bing.com/th/id/OIP.zGwmhOTZXAWneFulgez-xAHaHa?rs=1&pid=ImgDetMain"
+                alt="404 Error Image" />
+        </div>
+        <h1>404</h1>
+        <p>Oops! Page Not Found.</p>
+        <a href="{% url 'add_stock' %}">Go to Homepage</a>
+    </div>
+</body>
+
+</html>

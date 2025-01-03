@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockAnalyzer Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: url("https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+            background-size: cover;
+            line-height: 1.6;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            color: black;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 60px;
+        }
+
+        .hero .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: black;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .hero button {
+            background: linear-gradient(to right, #FF8C42, #FF7043);
+            color: black;
+            font-size: 1.1rem;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .hero button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #FF7043, #FF8C42);
+        }
+
+        /* Features Section */
+        .features {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Feature Cards */
+        .feature {
+            border-radius: 15px;
+            padding: 30px 20px;
+            width: 280px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-height: 200px;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: black;
+        }
+
+        .feature p {
+            font-size: 1rem;
+            color: black;
+        }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <section class="hero">
+            <div class="logo">STOCK PORTFOLIO ANALYZER</div>
+            <h1>Evaluate Your Stocks, Instantly</h1>
+            <p>Get clear insights to make smart decisions</p>
+            <a href="{% url 'login' %}">
+                <button>Get Started</button>
+            </a>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature">
+                <h2>Analysis</h2>
+                <p>Track your stocks as they move in the market.</p>
+            </div>
+            <div class="feature">
+                <h2>Simple Reports</h2>
+                <p>Understand trends with clean, simple reports.</p>
+            </div>
+            <div class="feature">
+                <h2>Save Time</h2>
+                <p>Analyze stocks faster than ever before.</p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sold Stocks Information</title>
+    <style>
+        /* General table style */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Roboto', sans-serif;
+            font-size: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            table-layout: auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #2ecc71;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 6px 8px;
+        }
+
+        td {
+            padding: 6px 8px;
+            font-size: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f7fb;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .table-container {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 11px;
+            }
+
+            th,
+            td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 10px;
+            }
+
+            th,
+            td {
+                padding: 6px 8px;
+            }
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        a:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-container">
+        <a href="{% url 'add_stock' %}" title="Go to Dashboard">Home</a>
+        <h1 class="header-title">SOLD STOCKS INFORMATION</h1>
+        <div class="header-right">
+            <a href="{% url 'download_sold_stocks' %}" class="btn-download" title="Download Data">Download</a>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>SCRIP</th>
+                    <th>P DATE</th>
+                    <th>M DAYS</th>
+                    <th>QTY</th>
+                    <th>WACC</th>
+                    <th>N INVEST</th>
+                    <th>LTP</th>
+                    <th>INT RATE</th>
+                    <th>INT</th>
+                    <th>CURR VALUE</th>
+                    <th>CURR P/L</th>
+                    <th>S AT</th>
+                    <th>S VALUE</th>
+                    <th>S DATE</th>
+                    <th>PROFIT</th>
+                    <th>LOSS</th>
+                    <th>DP</th>
+                    <th>PG TAX</th>
+                    <th>B COMMISSION</th>
+                    <th>NET PROFIT</th>
+                    <th>NET LOSS</th>
+                </tr>
+            </thead>
+            <tbody id="stockData">
+                {% if sold_stocks%}
+                {% for stock in sold_stocks %}
+                <tr>
+                    <td>{{ stock.SCRIP }}</td>
+                    <td>{{ stock.Purchased_Date|date:"Y/M/d" }}</td>
+                    <td>{{ stock.matured_days }}</td>
+                    <td>{{ stock.Quantity }}</td>
+                    {% if stock.WACC %}
+                    <td>{{ stock.WACC|floatformat:2 }}</td>
+                    {% else %}
+                    <td>{{ stock.Purchased_At|floatformat:2 }}</td>
+                    {% endif %}
+                    <td>{{ stock.net_investment|floatformat:2 }}</td>
+                    <td>{{ stock.LTP|floatformat:2 }}</td>
+                    <td>{{ stock.Interest_Rate|floatformat:2 }}</td>
+                    <td>{{ stock.interest|floatformat:2 }}</td>
+                    <td>{{ stock.current_value|floatformat:2 }}</td>
+                    <td>{{ stock.current_pl|floatformat:2 }}</td>
+                    <td>{{ stock.Sold_At|floatformat:2 }}</td>
+                    <td>{{ stock.sold_value|floatformat:2 }}</td>
+                    <td>{{ stock.Sold_Date|date:"Y/M/d" }}</td>
+                    <td>{{ stock.profit_booked|floatformat:2 }}</td>
+                    <td>{{ stock.loss_beared|floatformat:2 }}</td>
+                    <td>{{ stock.dp|floatformat:2 }}</td>
+                    <td>{{ stock.pg_tax|floatformat:2 }}</td>
+                    <td>{{ stock.Broker_Commission|floatformat:2 }}</td>
+                    <td>{{ stock.net_profit|floatformat:2 }}</td>
+                    <td>{{ stock.net_loss|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="21">No Data Available</td>
+                </tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                {% if sold_stocks %}
+                <tr>
+                    <td>TOTAL</td>
+                    <td colspan="4"></td>
+                    <td id="totalNetInvestment">0</td>
+                    <td colspan="2"></td>
+                    <td id="totalInterest">0</td>
+                    <td colspan="10"></td>
+                    <td id="totalNetProfit">0</td>
+                    <td id="totalNetLoss">0</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td>Total</td>
+                    <td colspan="21">No Data Available for Aggregation</td>
+                </tr>
+                {% endif %}
+            </tfoot>
+        </table>
+    </div>
+
+    <script>
+        window.onload = function () {
+            const rows = document.querySelectorAll('#stockData tr');
+            let totalNetInvestment = 0;
+            let totalInterest = 0;
+            let totalNetProfit = 0;
+            let totalNetLoss = 0;
+
+            rows.forEach(row => {
+                const netInvestment = parseFloat(row.cells[5].textContent) || 0;
+                const interest = parseFloat(row.cells[8].textContent) || 0;
+                const netProfit = parseFloat(row.cells[19].textContent) || 0;
+                const netLoss = parseFloat(row.cells[20].textContent) || 0;
+
+                totalNetInvestment += netInvestment;
+                totalInterest += interest;
+                totalNetProfit += netProfit;
+                totalNetLoss += netLoss;
+            });
+
+            document.getElementById('totalNetInvestment').textContent = totalNetInvestment.toFixed(2);
+            document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
+            document.getElementById('totalNetProfit').textContent = totalNetProfit.toFixed(2);
+            document.getElementById('totalNetLoss').textContent = totalNetLoss.toFixed(2);
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Sell Stock</title>
+
+    <style>
+        /* General body styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Heading styles */
+        h1 {
+            text-align: center;
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        /* Form container styling */
+        .form-container {
+            position: relative;
+            width: 30%;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Close button (X) styling */
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px;
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            width: 15px;
+            height: 15px;
+            background-color: #dc2214;
+            /* Red background */
+            border-radius: 50%;
+            /* Full roundness */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Subtle hover effect */
+        }
+
+        .close-btn:hover {
+            background-color: red;
+            /* Slightly darker red on hover */
+        }
+
+        /* Form button styling */
+        form button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        form button:hover {
+            background-color: #27ae60;
+        }
+
+        /* Styling the form fields */
+        form input,
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 12px;
+            box-sizing: border-box;
+            /* Ensure padding doesn't affect width */
+        }
+
+        form input:focus {
+            outline: none;
+            border: 1px solid #2ecc71;
+        }
+
+        /* Label styling */
+        form label {
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: block;
+            color: #34495e;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 80%;
+            }
+
+            form button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+
+    <script>
+        // Function to calculate broker commission
+        function calculateCommission() {
+            // Get the values of Quantity and Sold_At (Sale Price)
+            var quantity = parseInt(document.getElementById('id_Quantity').value);
+            var soldAt = parseFloat(document.getElementById('id_Sold_At').value);
+
+            // Calculate the total transaction amount
+            var transactionAmount = quantity * soldAt;
+
+            // Calculate commission based on transaction amount
+            var commission = 0;
+
+            if (transactionAmount <= 2500) {
+                commission = 10; // Flat Rs 10 for up to Rs. 2500
+            } else if (transactionAmount <= 50000) {
+                commission = transactionAmount * 0.0036; // 0.36% for Rs. 2501 to Rs. 50,000
+            } else if (transactionAmount <= 500000) {
+                commission = transactionAmount * 0.0033; // 0.33% for Rs. 50,001 to Rs. 5,00,000
+            } else if (transactionAmount <= 2000000) {
+                commission = transactionAmount * 0.0031; // 0.31% for Rs. 5,00,001 to Rs. 2,000,000
+            } else if (transactionAmount <= 100000000) {
+                commission = transactionAmount * 0.0027; // 0.27% for Rs. 2,000,001 to Rs. 1,00,00,000
+            } else {
+                commission = transactionAmount * 0.0024; // 0.24% for above Rs. 10,000,000
+            }
+
+            // Update the Broker_Commission field with calculated commission
+            document.getElementById('id_Broker_Commission').value = commission.toFixed(2);
+        }
+
+        // Add event listeners to calculate commission when input changes
+        document.addEventListener('DOMContentLoaded', function () {
+            // Trigger the calculation on change of Quantity or Sold_At fields
+            document.getElementById('id_Quantity').addEventListener('input', calculateCommission);
+            document.getElementById('id_Sold_At').addEventListener('input', calculateCommission);
+        });
+    </script>
+</head>
+
+<body>
+    <h1>SELL STOCK</h1>
+
+    <!-- Form container with absolute positioning for "X" -->
+    <div class="form-container">
+        <!-- Close button (X) -->
+        <a href="{% url 'add_stock' %}" class="close-btn"><i class="fa-regular fa-circle-xmark"></i></a>
+
+        <!-- Sell Stock Form -->
+        <form method="post">
+            {% csrf_token %}
+            <!-- Iterate through the form fields, assuming `form` is an object passed from the backend -->
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label|upper }}:</label>
+                {{ field }}
+            </div>
+            {% endfor %}
+
+            <button type="submit">Update as Sold</button>
+        </form>
+    </div>
+</body>
+
+</html>

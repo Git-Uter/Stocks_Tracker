@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEP Analysis</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Layout styles */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .pane {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: auto;
+        }
+
+        /* Heading styles */
+        h1 {
+            color: #34495e;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: orange;
+            color: white;
+            font-size: 13px;
+        }
+
+
+        tr:nth-child(even) {
+            background-color: #f4f7fb;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        a {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+            text-decoration: none;
+        }
+
+        a:hover {
+            background-color: #2980b9;
+        }
+
+        /* Header container styling for alignment */
+        .header-container {
+            display: flex;
+            align-items: center;
+            /* Align items vertically in the center */
+            padding: 0px 20px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-family: 'Roboto', sans-serif;
+            flex-grow: 1;
+            /* Ensure the title takes up available space */
+            text-align: center;
+            /* Center the title */
+            margin-left: 10px;
+        }
+
+        .header-container a {
+            margin-right: 20px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-container">
+        <a href="{%url 'add_stock' %}" title="Go to Dashboard">
+            Home
+        </a>
+        <h1 class="header-title">BEP ANALYSIS</h1>
+    </div>
+
+    <div class="container">
+        <table id="stock-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>SCRIP</th>
+                    <th>P DATE</th>
+                    <th>M DAYS</th>
+                    <th>WACC</th>
+                    <th>QTY</th>
+                    <th>LTP</th>
+                    <th>N INVESTMENT</th>
+                    <th>CURR VALUE</th>
+                    <th>DP</th>
+                    <th>INT RATE</th>
+                    <th>INT</th>
+                    <th>B COMMISSION</th>
+                    <th>% GROWTH</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if stock_data %}
+                {% for stock in stock_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ stock.SCRIP }}</td>
+                    <td>{{ stock.Purchased_Date }}</td>
+                    <td>{{ stock.matured_days }}</td>
+                    <td>
+                        {% if stock.WACC %}
+                        {{ stock.WACC|floatformat:2 }}
+                        {% else %}
+                        {{ stock.Purchased_At|floatformat:2 }}
+                        {% endif %}
+                    </td>
+                    <td class="quantity">{{ stock.Quantity }}</td>
+                    <td class="ltp">{{ stock.LTP }}</td>
+                    <td class="total-investment">{{ stock.net_investment|floatformat:2 }}</td>
+                    <td class="current_value">{{ stock.current_value|floatformat:2 }}</td>
+                    <td class="dp">25</td> <!-- DP value is fixed at 25 -->
+                    <td class="interest-rate">{{ stock.Interest_Rate|floatformat:2 }}</td>
+                    <td class="interest">{{ stock.interest|floatformat:2 }}</td>
+                    <td class="commission"></td> <!-- Placeholder for commission -->
+                    <td class="auto-pctg"></td> <!-- Placeholder for auto percentage -->
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="14">Purchased Data Unavailable for Analysis</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Function to calculate commission based on the rules
+        function calculateCommission(transactionAmount) {
+            let commission = 0;
+
+            if (transactionAmount <= 2500) {
+                commission = 10; // Flat Rs 10
+            } else if (transactionAmount <= 50000) {
+                commission = transactionAmount * 0.0036; // 0.36%
+            } else if (transactionAmount <= 500000) {
+                commission = transactionAmount * 0.0033; // 0.33%
+            } else if (transactionAmount <= 2000000) {
+                commission = transactionAmount * 0.0031; // 0.31%
+            } else if (transactionAmount <= 10000000) {
+                commission = transactionAmount * 0.0027; // 0.27%
+            } else {
+                commission = transactionAmount * 0.0024; // 0.24%
+            }
+
+            return commission;
+        }
+
+        // Function to calculate auto percentage
+        function calculateAutoPctg(totalInvestment, currentValue, dp, interestRate, brokerCommission) {
+            return ((totalInvestment - currentValue + dp + interestRate + brokerCommission) / currentValue) * 100;
+        }
+
+        // Function to calculate BEP
+        function calculateBEP(currentValue, dp, interest, brokerCommission, manualPctg) {
+            return currentValue - dp - interest - brokerCommission + (manualPctg / 100 * currentValue);
+        }
+
+        // Loop through each row in the table and calculate commission, total investment, interest, auto percentage, and BEP
+        document.addEventListener('DOMContentLoaded', function () {
+            const rows = document.querySelectorAll('#stock-table tbody tr');
+            rows.forEach(row => {
+                const totalInvestment = parseFloat(row.querySelector('.total-investment').textContent);
+                const current_value = parseFloat(row.querySelector('.current_value').textContent);
+                const dp = 25; // Fixed DP value
+                const interest = parseFloat(row.querySelector('.interest').textContent);
+
+                // Calculate commission based on transaction amount
+                const commission = calculateCommission(current_value);
+                row.querySelector('.commission').textContent = commission.toFixed(2); // Display commission
+
+                // Calculate auto percentage
+                const autoPctg = calculateAutoPctg(totalInvestment, current_value, dp, interest, commission);
+                row.querySelector('.auto-pctg').textContent = autoPctg.toFixed(2) + '%'; // Display auto percentage
+            });
+        });
+    </script>
+</body>
+
+</html>
