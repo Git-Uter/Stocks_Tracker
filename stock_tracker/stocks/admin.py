@@ -6,10 +6,9 @@ class StockAdmin(admin.ModelAdmin):
     list_display = (
         "SCRIP",
         "Purchased_Date",
-        "Purchased_At",
+        "WACC",
         "matured_days",
         "Quantity",
-        "WACC",
         "net_investment",
         "LTP",
         "current_value",

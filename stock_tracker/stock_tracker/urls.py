@@ -26,7 +26,7 @@ import stocks.urls
 handler404 = "stocks.views.custom_page_not_found"
 urlpatterns = [
     # URL for the admin page
-    # path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls),
     # URL for the custom registration page
     path("register/", views.register, name="register"),  # Custom registration view
     # URL for the custom login page

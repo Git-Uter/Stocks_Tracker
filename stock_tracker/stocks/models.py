@@ -7,11 +7,10 @@ from datetime import date
 class Stock(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to User model
     SCRIP = models.CharField(max_length=100)
+    WACC = models.FloatField(default=0)
     Purchased_Date = models.DateField(auto_now_add=True)
-    Purchased_At = models.FloatField(default=0)
     Interest_Rate = models.FloatField(default=0)
     Quantity = models.IntegerField(default=0)
-    WACC = models.FloatField(default=0)
     LTP = models.FloatField(default=0)
     Sold = models.BooleanField(default=False)
     Sellable = models.BooleanField(default=True)
@@ -20,7 +19,7 @@ class Stock(models.Model):
     Broker_Commission = models.FloatField(default=0)
 
     def clean(self):
-        if self.Purchased_At < 0:
+        if self.WACC < 0:
             raise ValidationError({"Purchased_At": "Cannot be negative"})
         if self.Quantity < 0:
             raise ValidationError({"Quantity": "Cannot be negative"})
@@ -33,73 +32,6 @@ class Stock(models.Model):
         if self.Interest_Rate < 0:
             raise ValidationError({"Interest_Rate": "Cannot be negative"})
 
-    def save(self, *args, **kwargs):
-        # Capitalize SCRIP
-        self.SCRIP = self.SCRIP.upper()
-
-        # Handle duplicates and calculate WACC only on creation
-        if self.pk is None:  # Only execute on creation (not update)
-            if self.WACC == 0:
-                # Check for duplicates by SCRIP and user
-                duplicates = Stock.objects.filter(
-                    SCRIP=self.SCRIP, Sold=False, user=self.user
-                )
-
-                if duplicates.exists():
-                    # Mark older duplicates as non-sellable
-                    duplicates.update(Sellable=False)
-
-                    # Remove rows with WACC > 0 (non-zero WACC)
-                    duplicates.filter(WACC__gt=0).delete()
-
-                    # Calculate new WACC
-                    new_wacc = self.calculate_new_wacc(duplicates)
-
-                    # Calculate weighted average interest rate
-                    total_net_investment = (
-                        sum(dup.net_investment() for dup in duplicates)
-                        + self.net_investment()
-                    )
-                    total_weighted_interest = sum(
-                        dup.Interest_Rate * dup.net_investment() for dup in duplicates
-                    ) + (self.Interest_Rate * self.net_investment())
-
-                    # If total net investment is greater than zero, calculate weighted interest rate
-                    WHT_Interest_Rate = (
-                        total_weighted_interest / total_net_investment
-                        if total_net_investment > 0
-                        else 0
-                    )
-
-                    # Create a new entry with updated WACC
-                    Stock.objects.create(
-                        user=self.user,  # Assign user
-                        SCRIP=self.SCRIP,
-                        Purchased_At=new_wacc,
-                        Interest_Rate=WHT_Interest_Rate,
-                        Quantity=sum(dup.Quantity for dup in duplicates)
-                        + self.Quantity,
-                        WACC=new_wacc,
-                        LTP=self.LTP,
-                        Sold=False,
-                        Sellable=True,  # New entry will be sellable
-                        Broker_Commission=self.Broker_Commission,
-                    )
-
-                    # Mark the current stock as non-sellable
-                    self.Sellable = False
-
-        super().save(*args, **kwargs)
-
-    def calculate_new_wacc(self, duplicates):
-        total_value = sum(dup.Quantity * dup.Purchased_At for dup in duplicates) + (
-            self.Quantity * self.Purchased_At
-        )
-        total_quantity = sum(dup.Quantity for dup in duplicates) + self.Quantity
-        if total_quantity == 0:
-            return 0
-        return total_value / total_quantity
-
     def matured_days(self):
         # Check if Sold_Date is not None, and return the correct days
         if self.Sold_Date:
@@ -107,11 +39,7 @@ class Stock(models.Model):
         return (date.today() - self.Purchased_Date).days
 
     def net_investment(self):
-        return (
-            self.WACC * self.Quantity
-            if self.WACC
-            else self.Purchased_At * self.Quantity
-        )
+        return self.WACC * self.Quantity if self.WACC else self.WACC * self.Quantity
 
     def interest(self):
         current_interest = (

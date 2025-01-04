@@ -5,9 +5,9 @@ from .models import Stock
 class StockCreateForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ["SCRIP", "Purchased_At", "Quantity", "Interest_Rate"]
+        fields = ["SCRIP", "WACC", "Quantity", "Interest_Rate"]
 
-    Purchased_At = forms.FloatField(
+    WACC = forms.FloatField(
         required=True,
         min_value=0,
         widget=forms.NumberInput(attrs={"placeholder": "Enter Price Per Share"}),
@@ -31,13 +31,13 @@ class StockCreateForm(forms.ModelForm):
 class StockUpdateForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ["SCRIP", "Purchased_At", "Quantity", "LTP"]
+        fields = ["SCRIP", "WACC", "Quantity", "LTP"]
 
     # Making fields read-only (use 'readonly' if data should still be submitted)
     SCRIP = forms.CharField(
         widget=forms.TextInput(attrs={"readonly": "readonly"}),
     )
-    Purchased_At = forms.FloatField(
+    WACC = forms.FloatField(
         required=True,
         min_value=0,
         widget=forms.NumberInput(attrs={"readonly": "readonly"}),
@@ -58,7 +58,7 @@ class StockUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["SCRIP"].widget.attrs.update({"readonly": "readonly"})
-        self.fields["Purchased_At"].widget.attrs.update({"readonly": "readonly"})
+        self.fields["WACC"].widget.attrs.update({"readonly": "readonly"})
         self.fields["Quantity"].widget.attrs.update({"readonly": "readonly"})
         self.fields["LTP"].widget.attrs.update(
             {"placeholder": "Enter Latest Trading Price (LTP)"}
@@ -70,7 +70,7 @@ class StockSellForm(forms.ModelForm):
         model = Stock
         fields = [
             "SCRIP",
-            "Purchased_At",
+            "WACC",
             "Quantity",
             "LTP",
             "Sold_At",
@@ -80,7 +80,7 @@ class StockSellForm(forms.ModelForm):
     SCRIP = forms.CharField(
         widget=forms.TextInput(attrs={"readonly": "readonly"}),
     )
-    Purchased_At = forms.FloatField(
+    WACC = forms.FloatField(
         required=True,
         min_value=0,
         widget=forms.NumberInput(attrs={"readonly": "readonly"}),
@@ -88,7 +88,7 @@ class StockSellForm(forms.ModelForm):
     Quantity = forms.IntegerField(
         required=True,
         min_value=1,
-        widget=forms.NumberInput(attrs={"readonly": "readonly"}),
+        widget=forms.NumberInput(attrs={"placeholder": "Enter Quantity to Sell"}),
     )
     LTP = forms.FloatField(
         required=True,
@@ -113,8 +113,10 @@ class StockSellForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["SCRIP"].widget.attrs.update({"readonly": "readonly"})
-        self.fields["Purchased_At"].widget.attrs.update({"readonly": "readonly"})
-        self.fields["Quantity"].widget.attrs.update({"readonly": "readonly"})
+        self.fields["WACC"].widget.attrs.update({"readonly": "readonly"})
+        self.fields["Quantity"].widget.attrs.update(
+            {"placeholder": "Enter Quantity to Sell"}
+        )
         self.fields["LTP"].widget.attrs.update({"readonly": "readonly"})
         self.fields["Sold_At"].widget.attrs.update(
             {"placeholder": "Enter Sale Price Per Share"}
