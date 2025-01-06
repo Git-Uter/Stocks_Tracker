@@ -5,7 +5,13 @@ from .models import Stock
 class StockCreateForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ["SCRIP", "WACC", "Quantity", "Interest_Rate"]
+        fields = [
+            "SCRIP",
+            "Purchased_Date",
+            "WACC",
+            "Quantity",
+            "Interest_Rate",
+        ]  # Add Purchased_Date here
 
     WACC = forms.FloatField(
         required=True,
@@ -22,11 +28,21 @@ class StockCreateForm(forms.ModelForm):
         min_value=1,
         widget=forms.NumberInput(attrs={"placeholder": "Enter Number of Share Bought"}),
     )
+    Purchased_Date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(
+            attrs={"placeholder": "Enter Purchase Date", "type": "date"}
+        ),  # type="date" for date picker
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["WACC"].label = "Purchased At"  # Change label for WACC
         self.fields["SCRIP"].widget.attrs.update({"placeholder": "Enter Stock Symbol"})
+        # Set up default today's date (optional), but can be overwritten in the frontend
+        self.fields["Purchased_Date"].initial = forms.DateField().widget.format_value(
+            forms.DateField().prepare_value(None)
+        )  # Set initial to today's date
 
 
 class StockUpdateForm(forms.ModelForm):
@@ -75,6 +91,7 @@ class StockSellForm(forms.ModelForm):
             "Quantity",
             "LTP",
             "Sold_At",
+            "Sold_Date",
             "Broker_Commission",
         ]
 
@@ -103,6 +120,12 @@ class StockSellForm(forms.ModelForm):
         decimal_places=2,
         widget=forms.NumberInput(attrs={"placeholder": "Enter Sale Price Per Share"}),
     )
+    Sold_Date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(
+            attrs={"placeholder": "Enter Sold Date", "type": "date"}
+        ),  # type="date" for date picker
+    )
 
     Broker_Commission = forms.DecimalField(
         required=True,
@@ -124,4 +147,7 @@ class StockSellForm(forms.ModelForm):
         )
         self.fields["Broker_Commission"].widget.attrs.update(
             {"placeholder": "Enter Broker Commission"}
+        )
+        self.fields["Sold_Date"].initial = forms.DateField().widget.format_value(
+            forms.DateField().prepare_value(None)
         )

@@ -8,7 +8,7 @@ class Stock(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to User model
     SCRIP = models.CharField(max_length=100)
     WACC = models.FloatField(default=0)
-    Purchased_Date = models.DateField(auto_now_add=True)
+    Purchased_Date = models.DateField(null=True, blank=True)
     Interest_Rate = models.FloatField(default=0)
     Quantity = models.IntegerField(default=0)
     LTP = models.FloatField(default=0)

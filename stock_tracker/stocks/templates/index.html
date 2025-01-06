@@ -35,7 +35,7 @@
             background-color: #ffffff;
             flex: 2;
             padding: 20px;
-            height: 65%;
+            height: 78%;
         }
 
         .info-pane {
@@ -384,5 +384,30 @@
     </div>
 
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the Purchased_Date input field
+        var dateField = document.querySelector("input[name='Purchased_Date']");
+
+        // Check if the field exists before adding event listener
+        if (dateField) {
+            // Add event listener for the 'click' event
+            dateField.addEventListener('click', function () {
+                // Check if the field is empty before setting the value
+                if (!dateField.value) {
+                    // Get today's date in YYYY-MM-DD format
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                    var yyyy = today.getFullYear();
+                    today = yyyy + '-' + mm + '-' + dd;
+
+                    // Set today's date to the Purchased_Date field
+                    dateField.value = today;
+                }
+            });
+        }
+    });
+</script>
 
 </html>
