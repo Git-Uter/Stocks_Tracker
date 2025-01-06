@@ -112,8 +112,10 @@
             margin-left: 10px;
         }
 
-        .header-container a {
-            margin-right: 20px;
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
         }
 
         /* Responsive design */
@@ -140,6 +142,9 @@
             Home
         </a>
         <h1 class="header-title">BEP ANALYSIS</h1>
+        <div class="header-right">
+            <a href="{% url 'download_stocks_bep' %}" class="btn-download" title="Download Data">Download</a>
+        </div>
     </div>
 
     <div class="container">
@@ -152,7 +157,7 @@
                     <th>M DAYS</th>
                     <th>WACC</th>
                     <th>QTY</th>
-                    <th>LTP</th>
+                    <th>CURR LTP</th>
                     <th>N INVESTMENT</th>
                     <th>CURR VALUE</th>
                     <th>DP</th>
@@ -160,6 +165,7 @@
                     <th>INT</th>
                     <th>B COMMISSION</th>
                     <th>% GROWTH</th>
+                    <th>BEP LTP</th> <!-- New column for Needed_LTP -->
                 </tr>
             </thead>
             <tbody>
@@ -171,11 +177,7 @@
                     <td>{{ stock.Purchased_Date }}</td>
                     <td>{{ stock.matured_days }}</td>
                     <td>
-                        {% if stock.WACC %}
                         {{ stock.WACC|floatformat:2 }}
-                        {% else %}
-                        {{ stock.Purchased_At|floatformat:2 }}
-                        {% endif %}
                     </td>
                     <td class="quantity">{{ stock.Quantity }}</td>
                     <td class="ltp">{{ stock.LTP }}</td>
@@ -186,11 +188,12 @@
                     <td class="interest">{{ stock.interest|floatformat:2 }}</td>
                     <td class="commission"></td> <!-- Placeholder for commission -->
                     <td class="auto-pctg"></td> <!-- Placeholder for auto percentage -->
+                    <td class="needed-ltp"></td> <!-- Placeholder for Needed_LTP -->
                 </tr>
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="14">Purchased Data Unavailable for Analysis</td>
+                    <td colspan="15">Purchased Data Unavailable for Analysis</td>
                 </tr>
                 {% endif %}
             </tbody>
@@ -224,12 +227,17 @@
             return ((totalInvestment - currentValue + dp + interestRate + brokerCommission) / currentValue) * 100;
         }
 
+        // Function to calculate Needed_LTP
+        function calculateNeededLTP(ltp, autoPctg) {
+            return ltp + (autoPctg / 100) * ltp;
+        }
+
         // Function to calculate BEP
         function calculateBEP(currentValue, dp, interest, brokerCommission, manualPctg) {
             return currentValue - dp - interest - brokerCommission + (manualPctg / 100 * currentValue);
         }
 
-        // Loop through each row in the table and calculate commission, total investment, interest, auto percentage, and BEP
+        // Loop through each row in the table and calculate commission, total investment, interest, auto percentage, Needed_LTP, and BEP
         document.addEventListener('DOMContentLoaded', function () {
             const rows = document.querySelectorAll('#stock-table tbody tr');
             rows.forEach(row => {
@@ -245,6 +253,11 @@
                 // Calculate auto percentage
                 const autoPctg = calculateAutoPctg(totalInvestment, current_value, dp, interest, commission);
                 row.querySelector('.auto-pctg').textContent = autoPctg.toFixed(2) + '%'; // Display auto percentage
+
+                // Calculate Needed_LTP
+                const ltp = parseFloat(row.querySelector('.ltp').textContent);
+                const neededLTP = calculateNeededLTP(ltp, autoPctg);
+                row.querySelector('.needed-ltp').textContent = neededLTP.toFixed(2); // Display Needed_LTP
             });
         });
     </script>

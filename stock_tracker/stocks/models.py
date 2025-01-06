@@ -14,9 +14,9 @@ class Stock(models.Model):
     LTP = models.FloatField(default=0)
     Sold = models.BooleanField(default=False)
     Sellable = models.BooleanField(default=True)
-    Sold_At = models.FloatField(default=0)
+    Sold_At = models.FloatField(null=True, blank=True)
     Sold_Date = models.DateField(null=True, blank=True)
-    Broker_Commission = models.FloatField(default=0)
+    Broker_Commission = models.FloatField(default=10)
 
     def clean(self):
         if self.WACC < 0:
@@ -27,8 +27,8 @@ class Stock(models.Model):
             raise ValidationError({"LTP": "Cannot be negative"})
         if self.Broker_Commission < 0:
             raise ValidationError({"Broker_Commission": "Cannot be negative"})
-        if self.Sold_At < 0:
-            raise ValidationError({"Sold_At": "Cannot be negative"})
+        if self.Sold_At is not None and self.Sold_At < 0:
+            raise ValidationError({"Sold_At": "Sold_At cannot be negative."})
         if self.Interest_Rate < 0:
             raise ValidationError({"Interest_Rate": "Cannot be negative"})
 
@@ -39,7 +39,7 @@ class Stock(models.Model):
         return (date.today() - self.Purchased_Date).days
 
     def net_investment(self):
-        return self.WACC * self.Quantity if self.WACC else self.WACC * self.Quantity
+        return self.WACC * self.Quantity
 
     def interest(self):
         current_interest = (

@@ -346,12 +346,7 @@
                         <td>{{ data.Purchased_Date|date:"Y/M/d" }}</td>
                         <td>{{ data.matured_days }}</td>
                         <td>{{ data.Quantity }}</td>
-                        <!-- <td>{{ data.WACC|floatformat:2 }}</td> -->
-                        {% if data.WACC %}
                         <td>{{ data.WACC|floatformat:2 }}</td>
-                        {% else %}
-                        <td>{{ data.Purchased_At|floatformat:2 }}</td>
-                        {% endif %}
                         <td>{{ data.LTP|floatformat:2 }}</td>
                         <td>{{ data.net_investment|floatformat:2 }}</td>
                         <td>{{ data.Interest_Rate|floatformat:2 }}</td>
@@ -361,12 +356,14 @@
                         <td class="actions">
                             {% if data.Sellable %}
                             <a href="{% url 'sell_stock' data.id %}" class="btn btn-sell"
-                                style="color: white; text-decoration: none;"><i class="fas fa-dollar-sign"
+                                style="color: white; text-decoration: none;" title="Sell"><i class="fas fa-dollar-sign"
                                     style="width: 11px;"></i></a>
                             <a href="{% url 'update_stock' data.id %}" class="btn btn-update"
-                                style="color: white; text-decoration: none;"><i class="fas fa-edit"></i></a>
+                                style="color: white; text-decoration: none;" title="Update"><i
+                                    class="fas fa-edit"></i></a>
                             <a href="{% url 'delete_stock' data.id %}" class="btn btn-delete"
-                                style="color: white; text-decoration: none;"><i class="fas fa-trash-alt"></i></a>
+                                style="color: white; text-decoration: none;" title="Delete"><i
+                                    class="fas fa-trash-alt"></i></a>
                             {% else %}
                             <a href="#" class="btn" style="color: red; text-decoration: none;"><i
                                     class="fa-regular fa-circle-xmark"></i></a>

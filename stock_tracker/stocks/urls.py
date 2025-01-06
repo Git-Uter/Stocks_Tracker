@@ -6,7 +6,10 @@ urlpatterns = [
     path("update/<int:stock_id>/", views.update_stock, name="update_stock"),
     path("delete/<int:stock_id>/", views.delete_stock, name="delete_stock"),
     path("sell/<int:stock_id>/", views.sell_stock, name="sell_stock"),
-    path("sold/", views.sold_stocks, name="sold_stock"),
+    path("sold_stocks/", views.sold_stocks, name="sold_stock"),
     path("bep_analysis", views.bep_analysis, name="bep_analysis"),
-    path("download/", views.download_sold_stocks, name="download_sold_stocks"),
+    path(
+        "download/sold_stocks", views.download_sold_stocks, name="download_sold_stocks"
+    ),
+    path("download/stocks_bep", views.download_stocks_bep, name="download_stocks_bep"),
 ]

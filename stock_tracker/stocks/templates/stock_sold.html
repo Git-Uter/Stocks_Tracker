@@ -166,11 +166,7 @@
                     <td>{{ stock.Purchased_Date|date:"Y/M/d" }}</td>
                     <td>{{ stock.matured_days }}</td>
                     <td>{{ stock.Quantity }}</td>
-                    {% if stock.WACC %}
                     <td>{{ stock.WACC|floatformat:2 }}</td>
-                    {% else %}
-                    <td>{{ stock.Purchased_At|floatformat:2 }}</td>
-                    {% endif %}
                     <td>{{ stock.net_investment|floatformat:2 }}</td>
                     <td>{{ stock.LTP|floatformat:2 }}</td>
                     <td>{{ stock.Interest_Rate|floatformat:2 }}</td>

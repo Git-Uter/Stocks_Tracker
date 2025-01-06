@@ -61,6 +61,7 @@ def add_stock(request):
                 return redirect("add_stock")
 
             # Step 7: If no duplicates found, save the new stock normally
+            stock.LTP = stock.WACC
             stock.save()
 
             # Redirect back to the stock list page
@@ -118,14 +119,33 @@ def update_stock(request, stock_id):
 
 
 @login_required
+# def delete_stock(request, stock_id):
+#     # Fetch the stock to be deleted, ensure it's associated with the logged-in user
+#     stock_to_delete = get_object_or_404(Stock, pk=stock_id, user=request.user)
+
+#     # Delete the stock entry
+#     stock_to_delete.delete()
+
+
+#     return redirect("add_stock")
 def delete_stock(request, stock_id):
-    # Fetch the stock to be deleted, ensure it's associated with the logged-in user
-    stock_to_delete = get_object_or_404(Stock, pk=stock_id, user=request.user)
+    # Get the stock object to be deleted
+    stock = get_object_or_404(Stock, id=stock_id, user=request.user)
 
-    # Delete the stock entry
-    stock_to_delete.delete()
+    # Check if the user is allowed to delete this stock (optional, depends on your permissions)
+    # if not request.user.has_permission_to_delete(stock):  # Example permission check
+    #     return HttpResponseForbidden("You are not allowed to delete this stock.")
 
-    return redirect("add_stock")
+    if request.method == "POST":
+        # User confirmed deletion
+        stock.delete()
+        # Redirect to the stock list or any other page after deletion
+        return redirect(
+            "add_stock"
+        )  # Change 'stock_list' to your actual stock list URL name
+
+    # If GET request, show the confirmation page
+    return render(request, "stock_delete.html", {"stock": stock})
 
 
 @login_required
@@ -281,6 +301,123 @@ def download_sold_stocks(request):
                 format(stock.Broker_Commission, ".2f"),
                 format(stock.net_profit(), ".2f"),
                 format(stock.net_loss(), ".2f"),
+            ]
+        )
+
+    return response
+
+
+# Function to calculate commission based on the provided rules
+def calculate_commission(transaction_amount):
+    if transaction_amount <= 2500:
+        return 10  # Flat Rs 10
+    elif transaction_amount <= 50000:
+        return transaction_amount * 0.0036  # 0.36%
+    elif transaction_amount <= 500000:
+        return transaction_amount * 0.0033  # 0.33%
+    elif transaction_amount <= 2000000:
+        return transaction_amount * 0.0031  # 0.31%
+    elif transaction_amount <= 10000000:
+        return transaction_amount * 0.0027  # 0.27%
+    else:
+        return transaction_amount * 0.0024  # 0.24%
+
+
+# Function to calculate the auto percentage
+def calculate_auto_pctg(
+    total_investment, current_value, dp, interest_rate, broker_commission
+):
+    return (
+        (total_investment - current_value + dp + interest_rate + broker_commission)
+        / current_value
+    ) * 100
+
+
+# Function to calculate needed LTP
+def calculate_needed_ltp(ltp, auto_pctg):
+    return ltp + (auto_pctg / 100) * ltp
+
+
+def download_stocks_bep(request):
+    # Get all stocks that belong to the logged-in user
+    stocks = Stock.objects.filter(Sold=False, user=request.user).order_by(
+        "SCRIP", "WACC"
+    )
+
+    # Prepare the response to download as CSV
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="bep_analysis.csv"'
+
+    writer = csv.writer(response)
+
+    # Write header row
+    writer.writerow(
+        [
+            "SCRIP",
+            "Purchased Date",
+            "Matured Days",
+            "WACC",
+            "Quantity",
+            "Current LTP",
+            "Net Investment",
+            "Current Value",
+            "DP",
+            "Interest Rate",
+            "Interest",
+            "Broker Commission",
+            "% Growth",
+            "Needed LTP",
+        ]
+    )
+
+    # Loop through each stock and write the corresponding data
+    for stock in stocks:
+        # Calculate necessary values
+        matured_days = stock.matured_days()
+        net_investment = stock.net_investment()
+        interest = stock.interest()
+        current_value = stock.current_value()
+        dp = stock.dp()
+        ltp = stock.LTP
+        interest_rate = stock.Interest_Rate
+
+        # Calculate commission using the provided function
+        broker_commission = calculate_commission(current_value)
+
+        # Calculate auto percentage
+        auto_pctg = calculate_auto_pctg(
+            net_investment, current_value, dp, interest, broker_commission
+        )
+
+        # Calculate Needed LTP
+        needed_ltp = calculate_needed_ltp(ltp, auto_pctg)
+
+        # Calculate BEP (Break Even Point)
+        bep = (
+            current_value
+            - dp
+            - interest
+            - broker_commission
+            + (auto_pctg / 100 * current_value)
+        )
+
+        # Write the row data
+        writer.writerow(
+            [
+                stock.SCRIP,
+                stock.Purchased_Date,
+                matured_days,
+                f"{stock.WACC:.2f}",
+                stock.Quantity,
+                f"{ltp:.2f}",
+                f"{net_investment:.2f}",
+                f"{current_value:.2f}",
+                f"{dp:.2f}",
+                f"{interest_rate:.2f}",
+                f"{interest:.2f}",
+                f"{broker_commission:.2f}",
+                f"{auto_pctg:.2f}",
+                f"{needed_ltp:.2f}",
             ]
         )
 

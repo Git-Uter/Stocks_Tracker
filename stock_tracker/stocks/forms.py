@@ -25,6 +25,7 @@ class StockCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["WACC"].label = "Purchased At"  # Change label for WACC
         self.fields["SCRIP"].widget.attrs.update({"placeholder": "Enter Stock Symbol"})
 
 
