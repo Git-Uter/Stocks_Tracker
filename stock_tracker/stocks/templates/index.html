@@ -237,24 +237,64 @@
             align-items: center;
         }
 
+        /* Profile Button styles */
+        .profile-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2980b9;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            /* Rounded corners */
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin: 10px 0;
+        }
+
+        .profile-button:hover {
+            background-color: #1f6fa2;
+            /* Darker shade on hover */
+        }
+
+        .profile-name {
+            text-transform: uppercase;
+            font-size: 18px;
+        }
 
         .logout {
+            position: fixed;
+            bottom: 20px;
+            /* Adjusted to your previous positioning */
+            right: 20px;
+            /* Adjusted to your previous positioning */
+            width: 60px;
+            /* Adjust button size */
+            height: 60px;
+            /* Adjust button size */
             background-color: #e74c3c;
             color: white;
-            border: none;
-            padding: 7px 9px;
+            font-size: 2rem;
+            /* Increased font size */
+            font-weight: bold;
             border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            /* Added shadow for effect */
+            text-align: center;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 1000;
+            /* To ensure it's on top */
         }
 
         .logout:hover {
             background-color: #c0392b;
-        }
-
-        .last {
-            width: 4%;
-            display: flex;
-            gap: 20px;
+            /* Darker red on hover */
         }
 
         /* Responsive design */
@@ -282,15 +322,16 @@
 
 <body>
     <div class="header">
-        <h1><a href="{% url 'financial_summary' %}" style="text-decoration: none; color: inherit;">
-                {{request.user.username|upper }}</a>
-        </h1>
+        <!-- Profile button with username -->
+        <a href="{% url 'financial_summary' %}" class="profile-button">
+            <span class="profile-name">{{ request.user.username|upper }}</span>
+        </a>
         <h1 style="text-align: center;">PORTFOLIO ANALYZER</h1>
-        <div class="last">
+        <div>
             <form action="{% url 'logout' %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" class="logout" title="logout"><i
-                        class="fa-solid fa-right-from-bracket"></i></button>
+                <button type="submit" title="logout" class="logout"><i class="fa-solid fa-right-from-bracket"
+                        style="font-size: 32px;"></i></button>
             </form>
         </div>
     </div>
@@ -339,7 +380,7 @@
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
-                {%if stock_data%}
+                {% if stock_data %}
                 <tbody>
                     {% for data in stock_data %}
                     <tr>
@@ -374,42 +415,16 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-                {%else%}
+                {% else %}
                 <tbody>
                     <tr>
                         <td colspan="13">Purchased Data Unavailable</td>
                     </tr>
                 </tbody>
-                {%endif%}
+                {% endif %}
             </table>
         </div>
     </div>
-
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get the Purchased_Date input field
-        var dateField = document.querySelector("input[name='Purchased_Date']");
-
-        // Check if the field exists before adding event listener
-        if (dateField) {
-            // Add event listener for the 'click' event
-            dateField.addEventListener('click', function () {
-                // Check if the field is empty before setting the value
-                if (!dateField.value) {
-                    // Get today's date in YYYY-MM-DD format
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                    var yyyy = today.getFullYear();
-                    today = yyyy + '-' + mm + '-' + dd;
-
-                    // Set today's date to the Purchased_Date field
-                    dateField.value = today;
-                }
-            });
-        }
-    });
-</script>
 
 </html>
