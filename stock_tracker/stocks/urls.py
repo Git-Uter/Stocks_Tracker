@@ -8,6 +8,7 @@ urlpatterns = [
     path("sell/<int:stock_id>/", views.sell_stock, name="sell_stock"),
     path("sold_stocks/", views.sold_stocks, name="sold_stock"),
     path("bep_analysis", views.bep_analysis, name="bep_analysis"),
+    path("financial_summary", views.financial_summary, name="financial_summary"),
     path(
         "download/sold_stocks", views.download_sold_stocks, name="download_sold_stocks"
     ),

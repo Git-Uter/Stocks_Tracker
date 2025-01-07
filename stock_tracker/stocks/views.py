@@ -423,6 +423,32 @@ def download_stocks_bep(request):
 
     return response
 
+def financial_summary(request):
+    # Get the user's stocks (adjust if necessary for authenticated users)
+    stocks = Stock.objects.filter(user=request.user)
+
+    # Aggregate the required values
+    total_net_investment = sum(stock.net_investment() for stock in stocks)
+    total_interest = sum(stock.interest() for stock in stocks)
+    total_net_sold_value = sum(stock.sold_value() for stock in stocks)
+    total_net_profit = sum(stock.net_profit() for stock in stocks)
+    total_net_loss = sum(stock.net_loss() for stock in stocks)
+    
+    # Calculate Net Profit - Net Loss
+    net_profit_minus_loss = total_net_profit - total_net_loss
+
+    # Context to pass to the template
+    context = {
+        'total_net_investment': total_net_investment,
+        'total_interest': total_interest,
+        'total_net_sold_value': total_net_sold_value,
+        'total_net_profit': total_net_profit,
+        'total_net_loss': total_net_loss,
+        'net_profit_minus_loss': net_profit_minus_loss,  # Add this new calculation
+    }
+
+    return render(request, 'financial_summary.html', context)
+
 
 def custom_page_not_found(request, exception):
     return render(request, "404.html", status=404)

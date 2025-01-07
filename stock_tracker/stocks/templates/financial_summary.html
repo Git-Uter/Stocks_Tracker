@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Summary</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1634989562411-85414eb2dfb6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header styling */
+        .header {
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #34495e;
+            font-size: 48px;
+        }
+
+        /* Home button (circular) */
+        .home-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #2980b9;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 100;
+        }
+
+        .home-btn:hover {
+            background-color: #1f6fa2;
+        }
+
+        /* Remove typical anchor tag styles */
+        .home-btn a {
+            text-decoration: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            padding: 20px;
+            width: 75%;
+            max-width: 1300px;
+            margin: 0 auto;
+            margin-top: 30px;
+        }
+
+        .grid-item {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .grid-item h3 {
+            font-size: 1.6rem;
+            color: #2980b9;
+            margin: 0;
+            padding: 5px 0;
+            border-bottom: 2px solid #2980b9;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 4px;
+        }
+
+        .grid-item .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-8px);
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 1024px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-item .value {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>FINANCIAL SUMMARY</h1>
+    </div>
+
+    <div class="grid-container">
+        <!-- Net Investment -->
+        <div class="grid-item">
+            <h3>Net Investment</h3>
+            <div class="value" id="net-investment">NRS {{ total_net_investment|default:"N/A" }}</div>
+        </div>
+
+        <!-- Net Interest -->
+        <div class="grid-item">
+            <h3>Net Interest</h3>
+            <div class="value" id="net-interest">NRS {{ total_interest|default:"N/A" }}</div>
+        </div>
+
+        <!-- Net Sold Value -->
+        <div class="grid-item">
+            <h3>Net Sold</h3>
+            <div class="value" id="net-sold">NRS {{ total_net_sold_value|default:"N/A" }}</div>
+        </div>
+
+        <!-- Net Profit -->
+        <div class="grid-item">
+            <h3>Net Profit</h3>
+            <div class="value" id="net-profit">NRS {{ total_net_profit|default:"N/A" }}</div>
+        </div>
+
+        <!-- Net Loss -->
+        <div class="grid-item">
+            <h3>Net Loss</h3>
+            <div class="value" id="net-loss">NRS {{ total_net_loss|default:"N/A" }}</div>
+        </div>
+
+        <!-- Net Profit - Net Loss -->
+        <div class="grid-item">
+            <h3>Aggregate P/L</h3>
+            <div class="value" id="aggregate-pl">NRS {{ net_profit_minus_loss|default:"N/A" }}</div>
+        </div>
+    </div>
+
+    <div class="home-btn">
+        <a href="{% url 'add_stock'%}">
+            H
+        </a>
+    </div>
+
+    <script>
+        // Function to format numbers with commas
+        function formatNumber(number) {
+            if (number === 'N/A' || number === undefined || number === null) {
+                return number;
+            }
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Format the values when the page loads
+        window.onload = function () {
+            const netInvestment = document.getElementById("net-investment");
+            const netInterest = document.getElementById("net-interest");
+            const netSold = document.getElementById("net-sold");
+            const netProfit = document.getElementById("net-profit");
+            const netLoss = document.getElementById("net-loss");
+            const aggregatePL = document.getElementById("aggregate-pl");
+
+            // Apply formatting
+            netInvestment.innerHTML = "NRS " + formatNumber(netInvestment.innerHTML.replace("NRS ", ""));
+            netInterest.innerHTML = "NRS " + formatNumber(netInterest.innerHTML.replace("NRS ", ""));
+            netSold.innerHTML = "NRS " + formatNumber(netSold.innerHTML.replace("NRS ", ""));
+            netProfit.innerHTML = "NRS " + formatNumber(netProfit.innerHTML.replace("NRS ", ""));
+            netLoss.innerHTML = "NRS " + formatNumber(netLoss.innerHTML.replace("NRS ", ""));
+            aggregatePL.innerHTML = "NRS " + formatNumber(aggregatePL.innerHTML.replace("NRS ", ""));
+        };
+    </script>
+</body>
+
+</html>

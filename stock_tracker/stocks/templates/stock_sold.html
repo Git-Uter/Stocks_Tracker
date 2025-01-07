@@ -159,7 +159,7 @@
                 </tr>
             </thead>
             <tbody id="stockData">
-                {% if sold_stocks%}
+                {% if sold_stocks %}
                 {% for stock in sold_stocks %}
                 <tr>
                     <td>{{ stock.SCRIP }}</td>
@@ -199,7 +199,9 @@
                     <td id="totalNetInvestment">0</td>
                     <td colspan="2"></td>
                     <td id="totalInterest">0</td>
-                    <td colspan="10"></td>
+                    <td colspan="3"></td>
+                    <td id="totalSoldValue">0</td> <!-- New column for total S VALUE -->
+                    <td colspan="6"></td>
                     <td id="totalNetProfit">0</td>
                     <td id="totalNetLoss">0</td>
                 </tr>
@@ -220,23 +222,27 @@
             let totalInterest = 0;
             let totalNetProfit = 0;
             let totalNetLoss = 0;
+            let totalSoldValue = 0;  // Add a variable to store total sold value (S VALUE)
 
             rows.forEach(row => {
                 const netInvestment = parseFloat(row.cells[5].textContent) || 0;
                 const interest = parseFloat(row.cells[8].textContent) || 0;
                 const netProfit = parseFloat(row.cells[19].textContent) || 0;
                 const netLoss = parseFloat(row.cells[20].textContent) || 0;
+                const soldValue = parseFloat(row.cells[12].textContent) || 0;  // Access the 12th column (S VALUE)
 
                 totalNetInvestment += netInvestment;
                 totalInterest += interest;
                 totalNetProfit += netProfit;
                 totalNetLoss += netLoss;
+                totalSoldValue += soldValue;  // Sum up the S VALUE column
             });
 
             document.getElementById('totalNetInvestment').textContent = totalNetInvestment.toFixed(2);
             document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
             document.getElementById('totalNetProfit').textContent = totalNetProfit.toFixed(2);
             document.getElementById('totalNetLoss').textContent = totalNetLoss.toFixed(2);
+            document.getElementById('totalSoldValue').textContent = totalSoldValue.toFixed(2);  // Display total sold value
         };
     </script>
 </body>

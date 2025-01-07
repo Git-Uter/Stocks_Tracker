@@ -282,7 +282,9 @@
 
 <body>
     <div class="header">
-        <h1>{{ request.user.username|upper }}</h1>
+        <h1><a href="{% url 'financial_summary' %}" style="text-decoration: none; color: inherit;">
+                {{request.user.username|upper }}</a>
+        </h1>
         <h1 style="text-align: center;">PORTFOLIO ANALYZER</h1>
         <div class="last">
             <form action="{% url 'logout' %}" method="POST">
