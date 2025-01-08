@@ -425,7 +425,9 @@ def download_stocks_bep(request):
 
 def financial_summary(request):
     # Get the user's stocks (adjust if necessary for authenticated users)
-    stocks = Stock.objects.filter(user=request.user)
+    stocks = Stock.objects.filter(Sold=True, user=request.user).order_by(
+        "Sold_Date", "SCRIP"
+    )
 
     # Aggregate the required values
     total_net_investment = sum(stock.net_investment() for stock in stocks)

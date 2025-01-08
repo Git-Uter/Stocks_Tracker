@@ -141,42 +141,42 @@
         <!-- Net Investment -->
         <div class="grid-item">
             <h3>Net Investment</h3>
-            <div class="value" id="net-investment">NRS {{ total_net_investment|default:"N/A" }}</div>
+            <div class="value" id="net-investment">NRS {{ total_net_investment|floatformat:2|default:"N/A" }}</div>
         </div>
 
         <!-- Net Interest -->
         <div class="grid-item">
             <h3>Net Interest</h3>
-            <div class="value" id="net-interest">NRS {{ total_interest|default:"N/A" }}</div>
+            <div class="value" id="net-interest">NRS {{ total_interest|floatformat:2|default:"N/A" }}</div>
         </div>
 
         <!-- Net Sold Value -->
         <div class="grid-item">
             <h3>Net Sold</h3>
-            <div class="value" id="net-sold">NRS {{ total_net_sold_value|default:"N/A" }}</div>
+            <div class="value" id="net-sold">NRS {{ total_net_sold_value|floatformat:2|default:"N/A" }}</div>
         </div>
 
         <!-- Net Profit -->
         <div class="grid-item">
             <h3>Net Profit</h3>
-            <div class="value" id="net-profit">NRS {{ total_net_profit|default:"N/A" }}</div>
+            <div class="value" id="net-profit">NRS {{ total_net_profit|floatformat:2|default:"N/A" }}</div>
         </div>
 
         <!-- Net Loss -->
         <div class="grid-item">
             <h3>Net Loss</h3>
-            <div class="value" id="net-loss">NRS {{ total_net_loss|default:"N/A" }}</div>
+            <div class="value" id="net-loss">NRS {{ total_net_loss|floatformat:2|default:"N/A" }}</div>
         </div>
 
         <!-- Net Profit - Net Loss -->
         <div class="grid-item">
             <h3>Aggregate P/L</h3>
-            <div class="value" id="aggregate-pl">NRS {{ net_profit_minus_loss|default:"N/A" }}</div>
+            <div class="value" id="aggregate-pl">NRS {{ net_profit_minus_loss|floatformat:2|default:"N/A"}}</div>
         </div>
     </div>
 
     <div class="home-btn">
-        <a href="{% url 'add_stock'%}">
+        <a href="{% url 'add_stock'%}" title="Go to Dashboard">
             H
         </a>
     </div>
@@ -187,8 +187,16 @@
             if (number === 'N/A' || number === undefined || number === null) {
                 return number;
             }
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            // Convert the number to a string
+            let [integerPart, decimalPart] = number.toString().split(".");
+
+            // Format the integer part with commas
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+            // Return the formatted number
+            return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
         }
+
 
         // Format the values when the page loads
         window.onload = function () {
